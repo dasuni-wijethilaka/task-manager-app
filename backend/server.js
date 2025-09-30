@@ -1,12 +1,12 @@
-const express = require('express');
-const cors = require('cors');
+const express = require('express'); // to build web server
+const cors = require('cors'); // front end to backend requests
 
-const app = express();
-const PORT = 5000;
+const app = express(); // create express application
+const PORT = 5000;//define port
 
 // Middleware
-app.use(cors());
-app.use(express.json());
+app.use(cors()); //enable course for  all routes
+app.use(express.json()); // parse json request bodies
 
 // In-memory data store
 let tasks = [
@@ -17,27 +17,27 @@ let tasks = [
 // Routes
 // GET all tasks
 app.get('/api/tasks', (req, res) => {
-  res.json(tasks);
+  res.json(tasks);// respont tasks json
 });
 
 // POST a new task
 app.post('/api/tasks', (req, res) => {
-  const newTask = {
+  const newTask = { //  create new task
     id: tasks.length + 1,
     title: req.body.title,
     completed: false
   };
-  tasks.push(newTask);
-  res.status(201).json(newTask);
+  tasks.push(newTask); //push to task array
+  res.status(201).json(newTask); // respond 201 with create new task
 });
 
 // PUT update a task
 app.put('/api/tasks/:id', (req, res) => {
-  const id = parseInt(req.params.id);
-  const task = tasks.find(t => t.id === id);
+  const id = parseInt(req.params.id); // extract id from route
+  const task = tasks.find(t => t.id === id); // find id from tasks
   
   if (task) {
-    task.completed = req.body.completed;
+    task.completed = req.body.completed; // update task completed status according to request
     res.json(task);
   } else {
     res.status(404).json({ message: 'Task not found' });
@@ -47,10 +47,16 @@ app.put('/api/tasks/:id', (req, res) => {
 // DELETE a task
 app.delete('/api/tasks/:id', (req, res) => {
   const id = parseInt(req.params.id);
-  tasks = tasks.filter(t => t.id !== id);
-  res.json({ message: 'Task deleted' });
+  const tasks = tasks.filter(t => t.id !== id);
+
+  if(tasks) {
+    res.json({ message: 'Task deleted' });
+  }else {
+    res.status(404).json({ message: 'Task not found'})
+  }
+  
 });
 
-app.listen(PORT, () => {
+app.listen(PORT, () => { // start express server
   console.log(`Server running on http://localhost:${PORT}`);
 });
